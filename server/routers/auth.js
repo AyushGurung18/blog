@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET;
 const User = require("../models/User");
 const Note = require("../models/note");
+const verifyToken = require("../middleware");
 
 const router = express.Router();
 
@@ -84,6 +85,35 @@ router.get('/user-info', async (req, res) => {
   }
   
   
+});
+
+router.get('/notes', async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const notes = await Note.find({ userId });
+    res.json({ notes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/post/notes', verifyToken,   async (req, res) => {
+  try {
+    const { title, content } = req.body; // Make sure title is properly extracted from the request body
+    const userId = req.userId; // Assuming you've already set req.userId in verifyToken middleware
+
+    const note = new Note({
+      title,
+      content,
+      userId,
+    });
+
+    await note.save();
+    res.status(200).json({ message: "Note added successfully", newNote: note });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 

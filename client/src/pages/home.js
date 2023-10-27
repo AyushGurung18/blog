@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import UserNotes from '../component/usernotes';
  
 
 function Home() {
@@ -37,6 +38,7 @@ function Home() {
         if (response.ok) {
           const data = await response.json();
           setUserName(data.username);
+          console.log(data.username);
         } else {
           throw new Error('Error fetching user information');
         }
@@ -54,6 +56,7 @@ function Home() {
     <div>
       <h2>Welcome to the Home Page {username}</h2>
       {message && <p>{message}</p>}
+      <UserNotes/>
     </div>
   );
 }
